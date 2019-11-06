@@ -23,7 +23,10 @@ int loading;
 int count;
 int back_button_color = 255;
 int reset_button_color = 255;
+int confirm_reset_button_color = 255;
+int cancel_reset_button_color = 255;
 double someFraction = 1;
+int HS;
 
 //cookie
 int cookieX = 300;
@@ -90,20 +93,21 @@ PImage perfectCookie;
 
 //Basic Functions
 void setup() {
-    frameRate(60);
-    size(1920, 1080);
-    autoClicker = loadImage("./js/IMG/Cursor_Icon.png");
-    bank = loadImage("./js/IMG/Bank_Icon.png");
-    factory = loadImage("./js/IMG/Factory_Icon.png");
-    farm = loadImage("./js/IMG/Farm_Icon.png");
-    grandma = loadImage("./js/IMG/Grandma_Icon.png");
-    mine = loadImage("./js/IMG/Mine_Icon.png");
-    temple = loadImage("./js/IMG/Temple_Icon.png");
-    wizardTower = loadImage("./js/IMG/WizardTower_Icon.png");
-    perfectCookie = loadImage("./js/IMG/perfect_Cookie.png");
-    //image(test,30,30);
-}
+        frameRate(60);
+        size(1920, 1080);
 
+        autoClicker = loadImage("./js/IMG/Cursor_Icon.png");
+        bank = loadImage("./js/IMG/Bank_Icon.png");
+        factory = loadImage("./js/IMG/Factory_Icon.png");
+        farm = loadImage("./js/IMG/Farm_Icon.png");
+        grandma = loadImage("./js/IMG/Grandma_Icon.png");
+        mine = loadImage("./js/IMG/Mine_Icon.png");
+        temple = loadImage("./js/IMG/Temple_Icon.png");
+        wizardTower = loadImage("./js/IMG/WizardTower_Icon.png");
+        perfectCookie = loadImage("./js/IMG/perfect_Cookie.png");
+        //image(test,30,30);
+    }
+    
 
 //MAIN
 void draw() {
@@ -117,6 +121,10 @@ void draw() {
     else if (gameState == 1) {
         mainGame();
     }
+    //goto Are you sure
+    else if (gameState == 3) {
+        confirm();
+    }
 }
 
 
@@ -128,7 +136,7 @@ void startScreen() {
     loading = 1;
     fill(255); //white
     text("Welcome to my first game!", 640, 100);
-    text("Cookie Clicker v1.0.0 ", 640, 200);
+    text("Box Clicker v0.1.0 ", 640, 200);
 
     //Button Function
     if (loading == 1) {
@@ -181,6 +189,7 @@ void mouseClicked() {
         //Mouse Click
         if (mouseX > cookieX && mouseX < cookieX + cookieW && mouseY > cookieY && mouseY < cookieY + cookieH) {
             cookies = cookies + 1 + CPOwned * 1;
+            HS = HS + 1 + CPOwned * 1;
         }
 
         //auto clicker
@@ -235,19 +244,31 @@ void mouseClicked() {
         }
         //RESET
         if (mouseX > 1600 && mouseX < 1800 && mouseY > 900 && mouseY < 1000) {
-            cookies = 0;
-            cps = 0;
-            autoClickerOwned = 0;
-            grandmaOwned = 0;
-            farmOwned = 0;
-            mineOwned = 0;
-            factoryOwned = 0;
-            bankOwned = 0;
-            templeOwned = 0;
-            wizardTowerOwned = 0;
-            CPOwned = 0;
+            gameState = 3;
         }
-
+        //Cancel Reset
+        if (gameState == 3) {
+            if (mouseX > 400 && mouseX < 785 && mouseY > 600 && mouseY < 700) {
+                gameState = 1;
+            }
+        }
+        //Confirm Reset
+        if (gameState == 3) {
+            if (mouseX > 1100 && mouseX < 1485 && mouseY > 600 && mouseY < 700) {
+                cookies = 0;
+                cps = 0;
+                autoClickerOwned = 0;
+                grandmaOwned = 0;
+                farmOwned = 0;
+                mineOwned = 0;
+                factoryOwned = 0;
+                bankOwned = 0;
+                templeOwned = 0;
+                wizardTowerOwned = 0;
+                CPOwned = 0;
+                gameState = 1;
+            }
+        }
         //anything else
         else {
             return;
@@ -258,6 +279,41 @@ void mouseClicked() {
 }
 
 
+
+void confirm() {
+    textSize(100);
+    text("Are you sure you want to reset?", 100, 100);
+    textSize(50);
+    text("This action can not be undone!", 100, 300);
+
+    //Yes
+    fill(confirm_reset_button_color);
+    rect(1100, 600, 385, 100);
+    fill(0);
+    textSize(45);
+    text("Yes reset game!", 1120, 665);
+
+    //No
+    fill(cancel_reset_button_color);
+    rect(400, 600, 385, 100);
+    fill(0);
+    textSize(45);
+    text("NOO, GO BACK!", 420, 665);
+
+    //Cancel button color
+    if (mouseX > 400 && mouseX < 785 && mouseY > 600 && mouseY < 700) {
+        cancel_reset_button_color = 150;
+    } else {
+        cancel_reset_button_color = 255;
+    }
+    //confirm button color
+    if (mouseX > 1100 && mouseX < 1485 && mouseY > 600 && mouseY < 700) {
+        confirm_reset_button_color = 150;
+    } else {
+        confirm_reset_button_color = 255;
+    }
+
+}
 
 
 //Main Game
@@ -355,9 +411,6 @@ void mainGame() {
         reset_button_color = 255;
     }
 
-
-
-
     //Int Values
     loading = 0;
     startClick = 1;
@@ -379,7 +432,7 @@ void mainGame() {
     rect(1600, 900, 200, 100);
     fill(0);
     textSize(45);
-    text("RESET!", 1620, 965);
+    text("RESET!!", 1620, 965);
 
     //Cookie Calculation
     textSize(20);
@@ -387,10 +440,12 @@ void mainGame() {
     text("Cookies: " + nf(cookies, 0, 2), 40, 100);
     if (count % 60 == 0) {
         cookies = int(cookies + cps);
+        HS = int(HS + cps);
     }
     //CPS Calculations
     text("CPS: " + nf(cps, 0, 2), 40, 150);
     cps = int(autoClickerOwned * 1 + grandmaOwned * 10 + farmOwned * 80 + mineOwned * 470 + factoryOwned * 2600 + bankOwned * 14000 + templeOwned * 78000 + wizardTowerOwned * 440000);
+    text("Lifetime Cookies: " + nf(HS, 0, 2), 40, 200);
 
 
     //autoclicker
