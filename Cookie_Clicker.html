@@ -12,9 +12,6 @@
     <h1>Cookie Clicker</h1>
     <p>Processing by Kyle Foster</p>
     <p>Click my name and then press f 11 to fullscreen, then scroll down to begin game!!!</p>
-    <p>How to play:</p>
-    <p>Click start button and then click cookies to gain more cookies, use upgrades to make your life</p>
-    <p>easier, i bet you wont be able to finish the game in a day!! :)</p>
     
     <script type="text/processing">
 //https://cookieclicker.fandom.com/wiki/Building
@@ -26,8 +23,10 @@ int loading;
 int count;
 int back_button_color = 255;
 int reset_button_color = 255;
+int info_button_color = 255;
 int confirm_reset_button_color = 255;
 int cancel_reset_button_color = 255;
+int back_to_game_color = 255;
 double someFraction = 1;
 int HS;
 
@@ -98,7 +97,6 @@ PImage perfectCookie;
 void setup() {
         frameRate(60);
         size(1920, 1080);
-
         autoClicker = loadImage("./js/IMG/Cursor_Icon.png");
         bank = loadImage("./js/IMG/Bank_Icon.png");
         factory = loadImage("./js/IMG/Factory_Icon.png");
@@ -110,7 +108,7 @@ void setup() {
         perfectCookie = loadImage("./js/IMG/perfect_Cookie.png");
         //image(test,30,30);
     }
-    
+
 
 //MAIN
 void draw() {
@@ -123,6 +121,8 @@ void draw() {
     //goto main game
     else if (gameState == 1) {
         mainGame();
+    } else if (gameState == 2) {
+        info();
     }
     //goto Are you sure
     else if (gameState == 3) {
@@ -139,7 +139,7 @@ void startScreen() {
     loading = 1;
     fill(255); //white
     text("Welcome to my first game!", 640, 100);
-    text("Box Clicker v0.1.0 ", 640, 200);
+    text("Box Clicker v1.0.0 ", 640, 200);
 
     //Button Function
     if (loading == 1) {
@@ -255,6 +255,15 @@ void mouseClicked() {
                 gameState = 1;
             }
         }
+        if (gameState == 2) {
+            if (mouseX > 800 && mouseX < 1130 && mouseY > 800 && mouseY < 900) {
+                gameState = 1;
+            }
+        }
+        //info button
+        if (mouseX > 150 && mouseX < 450 && mouseY > 900 && mouseY < 1000) {
+            gameState = 2;
+        }
         //Confirm Reset
         if (gameState == 3) {
             if (mouseX > 1100 && mouseX < 1485 && mouseY > 600 && mouseY < 700) {
@@ -281,6 +290,31 @@ void mouseClicked() {
 
 }
 
+
+void info() {
+    fill(0);
+    textSize(25);
+    text("1.) Click on the big cookie to increase your cookie count.", 100, 100);
+    text("2.) When you have enough cookies buy some upgrades", 100, 200);
+    text("3.) Upgrades will grant you cookies per second (CPS)", 100, 300);
+    text("4.) CPS will make it so you do not have to click as much", 100, 400);
+    fill(255, 0, 255);
+    text("Try to beat the game as fast as possible. I bet you can't do under 24 hours", 100, 500);
+    fill(255, 255, 0);
+    text("HAVE FUN!!!!!!!", 100, 600);
+    fill(back_to_game_color);
+    rect(800, 800, 330, 100);
+    fill(0);
+    textSize(45);
+    text("Back to game", 820, 865);
+
+    //back button color
+    if (mouseX > 800 && mouseX < 1130 && mouseY > 800 && mouseY < 900) {
+        back_to_game_color = 150;
+    } else {
+        back_to_game_color = 255;
+    }
+}
 
 
 void confirm() {
@@ -414,6 +448,14 @@ void mainGame() {
         reset_button_color = 255;
     }
 
+    //info Button
+    if (mouseX > 150 && mouseX < 450 && mouseY > 900 && mouseY < 1000) {
+        info_button_color = 150;
+    } else {
+        info_button_color = 255;
+    }
+
+
     //Int Values
     loading = 0;
     startClick = 1;
@@ -430,12 +472,19 @@ void mainGame() {
     textSize(45);
     text("Back to Home Screen", 720, 965);
 
-    //back button
+    //reset button
     fill(reset_button_color);
     rect(1600, 900, 200, 100);
     fill(0);
     textSize(45);
     text("RESET!!", 1620, 965);
+
+    //info button
+    fill(info_button_color);
+    rect(150, 900, 300, 100);
+    fill(0);
+    textSize(45);
+    text("How to Play", 170, 965);
 
     //Cookie Calculation
     textSize(20);
